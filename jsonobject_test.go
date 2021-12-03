@@ -52,7 +52,7 @@ func TestGetNonLeafNode(t *testing.T) {
         ]
 	}`
 	jo := NewJsonObject(jsonContent)
-	obj1, _ := json.Marshal(jo.GetJsonObject("obj").GetMapWithStringKey())
+	obj1, _ := json.Marshal(jo.GetJsonObject("obj").GetStringMap())
 	obj2, _ := json.Marshal(map[string]interface{}{
 		"name": "John",
 	})
