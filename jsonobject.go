@@ -2,6 +2,8 @@ package jsonobject
 
 import (
 	"encoding/json"
+	"fmt"
+	"strconv"
 )
 
 type JsonObject struct {
@@ -21,7 +23,11 @@ func (jo *JsonObject) GetString(params ...string) string {
 	myObj := jo.getObject(params...)
 	myStr, ok := myObj.(string)
 	if !ok {
-		return ""
+		myFloat, ok := myObj.(float64)
+		if !ok {
+			return ""
+		}
+		myStr = fmt.Sprint(myFloat)
 	}
 	return myStr
 }
@@ -40,7 +46,11 @@ func (jo *JsonObject) GetFloat64(params ...string) float64 {
 	myObj := jo.getObject(params...)
 	myFloat, ok := myObj.(float64)
 	if !ok {
-		return 0
+		myStr, ok := myObj.(string)
+		if !ok {
+			return 0
+		}
+		myFloat, _ = strconv.ParseFloat(myStr, 64)
 	}
 	return myFloat
 }
