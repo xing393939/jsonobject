@@ -10,13 +10,28 @@ type JsonObject struct {
 	p *interface{}
 }
 
-func NewJsonObject(str string) *JsonObject {
+func NewJsonObject(obj interface{}) *JsonObject {
 	newObj := interface{}(nil)
-	_ = json.Unmarshal([]byte(str), &newObj)
+	switch obj.(type) {
+	case string:
+		_ = json.Unmarshal([]byte(obj.(string)), &newObj)
+	case map[string]interface{}:
+		newObj = obj
+	default:
+		break
+	}
 	newJo := &JsonObject{
 		&newObj,
 	}
 	return newJo
+}
+
+func (jo *JsonObject) Set(key string, value interface{}) {
+	myObj := jo.getObject()
+	myMap, ok := myObj.(map[string]interface{})
+	if ok {
+		myMap[key] = value
+	}
 }
 
 func (jo *JsonObject) GetString(params ...string) string {
@@ -95,6 +110,9 @@ func (jo *JsonObject) GetJsonObject(params ...string) *JsonObject {
 }
 
 func (jo *JsonObject) getObject(params ...string) interface{} {
+	if jo.p == nil {
+		return nil
+	}
 	myObj := *jo.p
 	if len(params) == 0 {
 		return myObj
