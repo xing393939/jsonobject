@@ -27,3 +27,16 @@ for _, joRow := range joArr {
     println(joRow.GetString("name"), joRow.GetInt("score"))
 }
 ```
+
+# Methods 
+
+| Method  | Zero-value  |
+| ------------ | ------------ |
+| GetString  |  "" |
+| GetInt  | 0  |
+| GetBool  |  false |
+| GetInt64  | 0  |
+| GetFloat64  | 0  |
+| GetInt64  | 0  |
+| GetJsonObject  | *JsonObject  |
+| GetJsonObjectSlice  | []*JsonObject  |
