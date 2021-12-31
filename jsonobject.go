@@ -36,7 +36,6 @@ func (jo *JsonObject) Set(key string, value interface{}) {
 		return
 	}
 	if reflect.TypeOf(myObj).Elem() != reflect.TypeOf(value) {
-		println(reflect.TypeOf(myObj).Elem().String())
 		if reflect.TypeOf(myObj).Elem().String() != "interface {}" {
 			return
 		}
