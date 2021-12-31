@@ -24,4 +24,20 @@ func main() {
 	for _, joRow := range joArr {
 		println(joRow.GetString("name"), joRow.GetInt("score"))
 	}
+
+	jo = jsonobject.NewJsonObject(map[string]interface{}{
+		"key": "",
+		"stringMapInt": map[string]int{
+			"string1": 1,
+		},
+	})
+	jo.Set("key", "value")
+	jo2 := jo.GetJsonObject("stringMapInt")
+	jo2.Set("string1", 100)
+	jo2.Set("string2", 200)
+	jo2.Set("string3", 300)
+	println(jo.GetString("key"))
+	println(jo.GetJsonObject("stringMapInt").GetInt("string1"))
+	println(jo.GetJsonObject("stringMapInt").GetInt("string2"))
+	println(jo.GetJsonObject("stringMapInt").GetInt("string3"))
 }

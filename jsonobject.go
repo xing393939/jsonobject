@@ -3,6 +3,7 @@ package jsonobject
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strconv"
 )
 
@@ -28,10 +29,22 @@ func NewJsonObject(obj interface{}) *JsonObject {
 
 func (jo *JsonObject) Set(key string, value interface{}) {
 	myObj := jo.getObject()
-	myMap, ok := myObj.(map[string]interface{})
-	if ok {
-		myMap[key] = value
+	if reflect.ValueOf(myObj).Kind() != reflect.Map {
+		return
 	}
+	if reflect.TypeOf(myObj).Key() != reflect.TypeOf(key) {
+		return
+	}
+	if reflect.TypeOf(myObj).Elem() != reflect.TypeOf(value) {
+		println(reflect.TypeOf(myObj).Elem().String())
+		if reflect.TypeOf(myObj).Elem().String() != "interface {}" {
+			return
+		}
+	}
+	myMap := reflect.ValueOf(myObj)
+	myKey := reflect.ValueOf(key)
+	myVal := reflect.ValueOf(value)
+	myMap.SetMapIndex(myKey, myVal)
 }
 
 func (jo *JsonObject) GetString(params ...string) string {
@@ -59,13 +72,18 @@ func (jo *JsonObject) GetInt64(params ...string) int64 {
 
 func (jo *JsonObject) GetFloat64(params ...string) float64 {
 	myObj := jo.getObject(params...)
-	myFloat, ok := myObj.(float64)
-	if !ok {
-		myStr, ok := myObj.(string)
-		if !ok {
-			return 0
-		}
-		myFloat, _ = strconv.ParseFloat(myStr, 64)
+	myFloat := float64(0)
+	switch myObj.(type) {
+	case float64:
+		myFloat = myObj.(float64)
+	case float32:
+		myFloat = float64(myObj.(float32))
+	case int64:
+		myFloat = float64(myObj.(int64))
+	case int:
+		myFloat = float64(myObj.(int))
+	case string:
+		myFloat, _ = strconv.ParseFloat(myObj.(string), 64)
 	}
 	return myFloat
 }
@@ -117,9 +135,16 @@ func (jo *JsonObject) getObject(params ...string) interface{} {
 	if len(params) == 0 {
 		return myObj
 	}
-	myMap, ok := myObj.(map[string]interface{})
-	if !ok {
+	if reflect.ValueOf(myObj).Kind() != reflect.Map {
 		return nil
 	}
-	return myMap[params[0]]
+	if reflect.TypeOf(myObj).Key() != reflect.TypeOf(params[0]) {
+		return nil
+	}
+	myMap := reflect.ValueOf(myObj)
+	myVal := myMap.MapIndex(reflect.ValueOf(params[0]))
+	if !myVal.IsValid() {
+		return nil
+	}
+	return myVal.Interface()
 }
