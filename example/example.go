@@ -25,6 +25,12 @@ func main() {
 		println(joRow.GetString("name"), joRow.GetInt("score"))
 	}
 
+	joEntry := jsonobject.JsonObject{}
+	jo = &joEntry
+	// jo = jsonobject.NewJsonObject("")
+	jo.Set("a", "a")
+	println(jo.GetString("a"))
+
 	jo = jsonobject.NewJsonObject(map[string]interface{}{
 		"key": "",
 		"stringMapInt": map[string]int{

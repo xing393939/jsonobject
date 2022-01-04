@@ -29,6 +29,10 @@ func NewJsonObject(obj interface{}) *JsonObject {
 
 func (jo *JsonObject) Set(key string, value interface{}) {
 	myObj := jo.getObject()
+	if reflect.ValueOf(myObj).Kind() == reflect.Invalid {
+		myObj = map[string]interface{}{}
+		jo.p = &myObj
+	}
 	if reflect.ValueOf(myObj).Kind() != reflect.Map {
 		return
 	}
