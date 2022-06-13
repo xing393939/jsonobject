@@ -151,3 +151,7 @@ func (jo *JsonObject) getObject(params ...string) interface{} {
 	}
 	return myVal.Interface()
 }
+
+func (jo *JsonObject) IsNil() bool {
+	return jo.p == nil
+}
