@@ -153,5 +153,5 @@ func (jo *JsonObject) getObject(params ...string) interface{} {
 }
 
 func (jo *JsonObject) IsNil() bool {
-	return jo.p == nil
+	return *jo.p == nil
 }
