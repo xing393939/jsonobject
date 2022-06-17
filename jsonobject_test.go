@@ -62,3 +62,14 @@ func TestGetNonLeafNode(t *testing.T) {
 		assertEqual(t, item.GetInt("name"), i+1)
 	}
 }
+
+func TestIsNil(t *testing.T)  {
+	levelJo := NewJsonObject(map[string]interface{}{})
+	assertEqual(t, levelJo.IsNil(), false)
+
+	levelJo = NewJsonObject(nil)
+	assertEqual(t, levelJo.IsNil(), true)
+
+	levelJo = NewJsonObject(`{"a":1}`)
+	assertEqual(t, levelJo.IsNil(), false)
+}
