@@ -63,13 +63,47 @@ func TestGetNonLeafNode(t *testing.T) {
 	}
 }
 
-func TestIsNil(t *testing.T)  {
-	levelJo := NewJsonObject(map[string]interface{}{})
-	assertEqual(t, levelJo.IsNil(), false)
+func TestIsNil(t *testing.T) {
+	jo := NewJsonObject(map[string]interface{}{})
+	assertEqual(t, jo.IsNil(), false)
 
-	levelJo = NewJsonObject(nil)
-	assertEqual(t, levelJo.IsNil(), true)
+	jo = NewJsonObject(nil)
+	assertEqual(t, jo.IsNil(), true)
 
-	levelJo = NewJsonObject(`{"a":1}`)
-	assertEqual(t, levelJo.IsNil(), false)
+	jo = NewJsonObject(`{"a":1}`)
+	assertEqual(t, jo.IsNil(), false)
+	assertEqual(t, jo.IsNil("a"), false)
+	assertEqual(t, jo.IsNil("b"), true)
+}
+
+func TestMarshal(t *testing.T) {
+	jsonContent := `{
+		"obj": {
+            "name": "John"
+        },
+        "list": [
+            {"name": 1}, {"name": 2}, {"name": 3}
+        ]
+	}`
+	jo := NewJsonObject(jsonContent)
+	assertEqual(t, len(jo.Marshal()), 65)
+
+	list := jo.GetJsonObjectSlice("list")
+	list[0].Set("name", 11)
+	assertEqual(t, len(jo.Marshal()), 66)
+
+	obj := jo.GetJsonObject("obj")
+	obj.Set("name", "John2")
+	assertEqual(t, len(jo.Marshal()), 67)
+
+	mapJo := NewJsonObject(map[string]interface{}{
+		"a": "a",
+		"b": []map[string]interface{}{
+			{"childA": 1},
+		},
+	})
+	mapJo.Set("a", "aa")
+	assertEqual(t, mapJo.Marshal(), `{"a":"aa","b":[{"childA":1}]}`)
+	mapJo.GetJsonObjectSlice("b")[0].Set("childA", 11)
+	assertEqual(t, mapJo.Marshal(), `{"a":"aa","b":[{"childA":11}]}`)
 }

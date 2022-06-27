@@ -18,8 +18,6 @@ func NewJsonObject(obj interface{}) *JsonObject {
 		_ = json.Unmarshal([]byte(obj.(string)), &newObj)
 	case map[string]interface{}:
 		newObj = obj
-	default:
-		break
 	}
 	newJo := &JsonObject{
 		&newObj,
@@ -27,27 +25,28 @@ func NewJsonObject(obj interface{}) *JsonObject {
 	return newJo
 }
 
-func (jo *JsonObject) Set(key string, value interface{}) {
+func (jo *JsonObject) Set(key string, value interface{}) bool {
 	myObj := jo.getObject()
 	if reflect.ValueOf(myObj).Kind() == reflect.Invalid {
 		myObj = map[string]interface{}{}
 		jo.p = &myObj
 	}
 	if reflect.ValueOf(myObj).Kind() != reflect.Map {
-		return
+		return false
 	}
-	if reflect.TypeOf(myObj).Key() != reflect.TypeOf(key) {
-		return
+	if reflect.TypeOf(myObj).Key().Kind() != reflect.String {
+		return false
 	}
 	if reflect.TypeOf(myObj).Elem() != reflect.TypeOf(value) {
-		if reflect.TypeOf(myObj).Elem().String() != "interface {}" {
-			return
+		if reflect.TypeOf(myObj).Elem().Kind() != reflect.Interface {
+			return false
 		}
 	}
 	myMap := reflect.ValueOf(myObj)
 	myKey := reflect.ValueOf(key)
 	myVal := reflect.ValueOf(value)
 	myMap.SetMapIndex(myKey, myVal)
+	return true
 }
 
 func (jo *JsonObject) GetString(params ...string) string {
@@ -111,13 +110,17 @@ func (jo *JsonObject) GetStringMap(params ...string) map[string]interface{} {
 
 func (jo *JsonObject) GetJsonObjectSlice(params ...string) []*JsonObject {
 	myObj := jo.getObject(params...)
-	mySlice, ok := myObj.([]interface{})
 	var newJoSlice []*JsonObject
-	if !ok {
-		return newJoSlice
+	if mySlice, ok := myObj.([]interface{}); ok {
+		for k := range mySlice {
+			newJoSlice = append(newJoSlice, &JsonObject{&mySlice[k]})
+		}
 	}
-	for k := range mySlice {
-		newJoSlice = append(newJoSlice, &JsonObject{&mySlice[k]})
+	if mySlice, ok := myObj.([]map[string]interface{}); ok {
+		for k := range mySlice {
+			tmpMap := interface{}(mySlice[k])
+			newJoSlice = append(newJoSlice, &JsonObject{&tmpMap})
+		}
 	}
 	return newJoSlice
 }
@@ -141,7 +144,7 @@ func (jo *JsonObject) getObject(params ...string) interface{} {
 	if reflect.ValueOf(myObj).Kind() != reflect.Map {
 		return nil
 	}
-	if reflect.TypeOf(myObj).Key() != reflect.TypeOf(params[0]) {
+	if reflect.TypeOf(myObj).Key().Kind() != reflect.String {
 		return nil
 	}
 	myMap := reflect.ValueOf(myObj)
@@ -152,6 +155,15 @@ func (jo *JsonObject) getObject(params ...string) interface{} {
 	return myVal.Interface()
 }
 
-func (jo *JsonObject) IsNil() bool {
-	return *jo.p == nil
+func (jo *JsonObject) IsNil(params ...string) bool {
+	return jo.getObject(params...) == nil
+}
+
+func (jo *JsonObject) Marshal(params ...string) string {
+	myObj := jo.getObject(params...)
+	bytes, err := json.Marshal(myObj)
+	if err != nil {
+		return ""
+	}
+	return string(bytes)
 }
