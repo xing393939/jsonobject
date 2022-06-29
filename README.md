@@ -1,5 +1,5 @@
 [![Build](https://github.com/xing393939/jsonobject/actions/workflows/go.yml/badge.svg)](https://github.com/xing393939/jsonobject/actions/?query=branch%3Amain+event%3Apush)
-[![GoDoc](https://godoc.org/github.com/xing393939/jsonobject?status.svg)](https://godoc.org/github.com/xing393939/jsonobject)
+[![Go Reference](https://pkg.go.dev/badge/github.com/xing393939/jsonobject.svg)](https://pkg.go.dev/github.com/xing393939/jsonobject)
 
 Easy JSON parser for Go. No custom structs, no code generation.
 
