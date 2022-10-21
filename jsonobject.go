@@ -103,7 +103,7 @@ func (jo *JsonObject) GetStringMap(params ...string) map[string]interface{} {
 	myObj := jo.getObject(params...)
 	myMap, ok := myObj.(map[string]interface{})
 	if !ok {
-		return nil
+		myMap = make(map[string]interface{})
 	}
 	return myMap
 }
