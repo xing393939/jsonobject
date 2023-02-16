@@ -25,8 +25,9 @@ func TestGetLeafNode(t *testing.T) {
 	assertEqual(t, jo.GetBool("bool"), true)
 	assertEqual(t, jo.GetInt("int"), 1)
 	assertEqual(t, jo.GetInt64("int64"), int64(64))
-	assertEqual(t, jo.GetFloat64("float64"), float64(1.64))
+	assertEqual(t, jo.GetFloat64("float64"), 1.64)
 	assertEqual(t, jo.GetString("string"), "abc")
+	assertEqual(t, jo.GetString("float64"), "1.64")
 	// item not exists
 	assertEqual(t, jo.GetBool("bool_extra"), false)
 	assertEqual(t, jo.GetInt("int_extra"), 0)
@@ -64,7 +65,16 @@ func TestGetNonLeafNode(t *testing.T) {
 }
 
 func TestIsNil(t *testing.T) {
-	jo := NewJsonObject(map[string]interface{}{})
+	jo := NewJsonObject(map[string]interface{}{
+		"float32": float32(1.32),
+		"int64":   int64(1),
+		"int":     1,
+		"string":  "string",
+	})
+	assertEqual(t, jo.GetFloat64("float32"), float64(float32(1.32)))
+	assertEqual(t, jo.GetInt64("int64"), int64(1))
+	assertEqual(t, jo.GetInt("int"), 1)
+	assertEqual(t, jo.GetString("string"), "string")
 	assertEqual(t, jo.IsNil(), false)
 
 	jo = NewJsonObject(nil)
