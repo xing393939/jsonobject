@@ -27,25 +27,9 @@ func NewJsonObject(obj interface{}) *JsonObject {
 
 func (jo *JsonObject) Set(key string, value interface{}) bool {
 	myObj := jo.getObject()
-	if reflect.ValueOf(myObj).Kind() == reflect.Invalid {
-		myObj = map[string]interface{}{}
-		jo.p = &myObj
+	if myMap, ok := myObj.(map[string]interface{}); ok {
+		myMap[key] = value
 	}
-	if reflect.ValueOf(myObj).Kind() != reflect.Map {
-		return false
-	}
-	if reflect.TypeOf(myObj).Key().Kind() != reflect.String {
-		return false
-	}
-	if reflect.TypeOf(myObj).Elem() != reflect.TypeOf(value) {
-		if reflect.TypeOf(myObj).Elem().Kind() != reflect.Interface {
-			return false
-		}
-	}
-	myMap := reflect.ValueOf(myObj)
-	myKey := reflect.ValueOf(key)
-	myVal := reflect.ValueOf(value)
-	myMap.SetMapIndex(myKey, myVal)
 	return true
 }
 
@@ -141,18 +125,10 @@ func (jo *JsonObject) getObject(params ...string) interface{} {
 	if len(params) == 0 {
 		return myObj
 	}
-	if reflect.ValueOf(myObj).Kind() != reflect.Map {
-		return nil
+	if myMap, ok := myObj.(map[string]interface{}); ok {
+		return myMap[params[0]]
 	}
-	if reflect.TypeOf(myObj).Key().Kind() != reflect.String {
-		return nil
-	}
-	myMap := reflect.ValueOf(myObj)
-	myVal := myMap.MapIndex(reflect.ValueOf(params[0]))
-	if !myVal.IsValid() {
-		return nil
-	}
-	return myVal.Interface()
+	return nil
 }
 
 func (jo *JsonObject) IsNil(params ...string) bool {
