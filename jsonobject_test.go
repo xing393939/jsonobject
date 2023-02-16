@@ -69,13 +69,13 @@ func TestIsNil(t *testing.T) {
 		"float32": float32(1.32),
 		"int64":   int64(1),
 		"int":     1,
-		"string":  "string",
+		"string":  "1.32",
 	})
 	assertEqual(t, jo.GetJsonObject("int").GetInt("none"), 0)
 	assertEqual(t, jo.GetFloat64("float32"), float64(float32(1.32)))
 	assertEqual(t, jo.GetInt64("int64"), int64(1))
 	assertEqual(t, jo.GetInt("int"), 1)
-	assertEqual(t, jo.GetString("string"), "string")
+	assertEqual(t, jo.GetFloat64("string"), 1.32)
 	assertEqual(t, jo.IsNil(), false)
 
 	jo = NewJsonObject(nil)
