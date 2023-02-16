@@ -71,6 +71,7 @@ func TestIsNil(t *testing.T) {
 		"int":     1,
 		"string":  "string",
 	})
+	assertEqual(t, jo.GetJsonObject("int").GetInt("none"), 0)
 	assertEqual(t, jo.GetFloat64("float32"), float64(float32(1.32)))
 	assertEqual(t, jo.GetInt64("int64"), int64(1))
 	assertEqual(t, jo.GetInt("int"), 1)
@@ -78,6 +79,7 @@ func TestIsNil(t *testing.T) {
 	assertEqual(t, jo.IsNil(), false)
 
 	jo = NewJsonObject(nil)
+	assertEqual(t, jo.GetStringMap() == nil, false)
 	assertEqual(t, jo.IsNil(), true)
 
 	jo = NewJsonObject(`{"a":1}`)
