@@ -2,7 +2,7 @@
 [![codecov](https://codecov.io/gh/xing393939/jsonobject/branch/main/graph/badge.svg)](https://codecov.io/gh/xing393939/jsonobject)
 [![Go Reference](https://pkg.go.dev/badge/github.com/xing393939/jsonobject.svg)](https://pkg.go.dev/github.com/xing393939/jsonobject)
 
-Easy JSON parser for Go. No custom structs, no code generation.
+Easy JSON parser for Go. No custom structs, no code generation, no reflection.
 
 # Installing
 go get github.com/xing393939/jsonobject
