@@ -15,6 +15,8 @@ func NewJsonObject(obj interface{}) *JsonObject {
 	switch obj.(type) {
 	case string:
 		_ = json.Unmarshal([]byte(obj.(string)), &newObj)
+	case []byte:
+		_ = json.Unmarshal(obj.([]byte), &newObj)
 	case map[string]interface{}:
 		newObj = obj
 	}
