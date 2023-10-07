@@ -30,8 +30,9 @@ func (jo *JsonObject) Set(key string, value interface{}) bool {
 	myObj := jo.getObject()
 	if myMap, ok := myObj.(map[string]interface{}); ok {
 		myMap[key] = value
+		return true
 	}
-	return true
+	return false
 }
 
 func (jo *JsonObject) GetString(params ...string) string {
