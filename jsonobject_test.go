@@ -28,6 +28,7 @@ func TestGetLeafNode(t *testing.T) {
 	assertEqual(t, jo.GetFloat64("float64"), 1.64)
 	assertEqual(t, jo.GetString("string"), "abc")
 	assertEqual(t, jo.GetString("float64"), "1.64")
+	assertEqual(t, len(jo.GetInterfaceSlice("list")), 5)
 	// item not exists
 	assertEqual(t, jo.GetBool("bool_extra"), false)
 	assertEqual(t, jo.GetInt("int_extra"), 0)
