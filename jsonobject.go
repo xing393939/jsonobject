@@ -126,7 +126,7 @@ func (jo *JsonObject) GetJsonObject(params ...string) *JsonObject {
 }
 
 func (jo *JsonObject) getObject(params ...string) interface{} {
-	if jo.p == nil {
+	if jo == nil || jo.p == nil {
 		return nil
 	}
 	myObj := *jo.p
