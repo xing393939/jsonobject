@@ -2,14 +2,10 @@ package jsonobject
 
 import (
 	"encoding/json"
+	"fmt"
+	"math"
 	"testing"
 )
-
-func assertEqual(t *testing.T, a interface{}, b interface{}) {
-	if a != b {
-		t.Fatalf("unexpected value obtained; got %q; want %q", a, b)
-	}
-}
 
 func TestGetLeafNode(t *testing.T) {
 	jsonContent := `{
@@ -119,4 +115,50 @@ func TestMarshal(t *testing.T) {
 	assertEqual(t, mapJo.Marshal(), `{"a":"aa","b":[{"childA":1}]}`)
 	mapJo.GetJsonObjectSlice("b")[0].Set("childA", 11)
 	assertEqual(t, mapJo.Marshal(), `{"a":"aa","b":[{"childA":11}]}`)
+}
+
+func TestLimitation(t *testing.T) {
+	list1 := []interface{}{
+		math.MaxInt, math.MaxInt32, math.MaxInt64, math.MaxFloat32,
+		math.MaxFloat64, math.MaxUint32, uint64(18446744073709551615),
+	}
+	mapJo := NewJsonObject("{}")
+	var list2 []string
+	for i, num := range list1 {
+		list2 = append(list2, fmt.Sprint(num))
+		mapJo.Set(fmt.Sprint("list1", i), num)
+		mapJo.Set(fmt.Sprint("list2", i), fmt.Sprint(num))
+	}
+	for i, num := range list1 {
+		assertEqual(t, mapJo.GetString(fmt.Sprint("list2", i)), fmt.Sprint(num))
+		assertEqual(t, mapJo.GetString(fmt.Sprint("list2", i)), list2[i])
+	}
+	for i, num := range list1 {
+		if i == 3 || i == 4 || i == 6 {
+			continue
+		}
+		assertEqual(t, mapJo.GetInt(fmt.Sprint("list1", i)), num)
+		assertEqual(t, mapJo.GetInt(fmt.Sprint("list2", i)), num)
+		assertEqual(t, mapJo.GetInt64(fmt.Sprint("list1", i)), int64(num.(int)))
+		assertEqual(t, mapJo.GetInt64(fmt.Sprint("list2", i)), int64(num.(int)))
+	}
+	assertEqual(t, mapJo.GetFloat64("list23"), math.MaxFloat32)
+	assertEqual(t, mapJo.GetFloat64("list24"), math.MaxFloat64)
+
+	// assert getNumber
+	assertEqual(t, int(getNumber[int64](list1[0])), list1[0])
+	assertEqual(t, int(getNumber[int64](list1[1])), list1[1])
+	assertEqual(t, int(getNumber[int64](list1[2])), list1[2])
+	assertEqual(t, getNumber[float64](list1[3]), list1[3])
+	assertEqual(t, getNumber[float64](list1[4]), list1[4])
+	assertEqual(t, getNumber[uint64](list1[5]), uint64(4294967295))
+	assertEqual(t, getNumber[uint64](list1[6]), list1[6])
+
+	assertEqual(t, int(getNumber[int64](list2[0])), list1[0])
+	assertEqual(t, int(getNumber[int64](list2[1])), list1[1])
+	assertEqual(t, int(getNumber[int64](list2[2])), list1[2])
+	assertEqual(t, getNumber[float64](list2[3]), list1[3])
+	assertEqual(t, getNumber[float64](list2[4]), list1[4])
+	assertEqual(t, getNumber[uint64](list2[5]), uint64(4294967295))
+	assertEqual(t, getNumber[uint64](list2[6]), list1[6])
 }

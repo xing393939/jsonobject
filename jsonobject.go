@@ -37,43 +37,32 @@ func (jo *JsonObject) Set(key string, value interface{}) bool {
 
 func (jo *JsonObject) GetString(params ...string) string {
 	myObj := jo.getObject(params...)
-	myStr, ok := myObj.(string)
-	if !ok {
-		myFloat, ok := myObj.(float64)
-		if !ok {
-			return ""
-		}
-		myStr = fmt.Sprint(myFloat)
+	myStr := ""
+	switch myObj.(type) {
+	case string:
+		myStr = myObj.(string)
+	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64:
+		myStr = fmt.Sprint(myObj)
 	}
 	return myStr
 }
 
 func (jo *JsonObject) GetInt(params ...string) int {
-	myObj := jo.GetFloat64(params...)
-	return int(myObj)
+	myObj := jo.getObject(params...)
+	myNumber := getNumber[int64](myObj)
+	return int(myNumber)
 }
 
 func (jo *JsonObject) GetInt64(params ...string) int64 {
-	myObj := jo.GetFloat64(params...)
-	return int64(myObj)
+	myObj := jo.getObject(params...)
+	myNumber := getNumber[int64](myObj)
+	return myNumber
 }
 
 func (jo *JsonObject) GetFloat64(params ...string) float64 {
 	myObj := jo.getObject(params...)
-	myFloat := float64(0)
-	switch myObj.(type) {
-	case float64:
-		myFloat = myObj.(float64)
-	case float32:
-		myFloat = float64(myObj.(float32))
-	case int64:
-		myFloat = float64(myObj.(int64))
-	case int:
-		myFloat = float64(myObj.(int))
-	case string:
-		myFloat, _ = strconv.ParseFloat(myObj.(string), 64)
-	}
-	return myFloat
+	myNumber := getNumber[float64](myObj)
+	return myNumber
 }
 
 func (jo *JsonObject) GetBool(params ...string) bool {
@@ -150,4 +139,47 @@ func (jo *JsonObject) Marshal(params ...string) string {
 		return ""
 	}
 	return string(bytes)
+}
+
+func getNumber[T int64 | uint64 | float64](src any) (dist T) {
+	switch src.(type) {
+	case int:
+		dist = (T)(src.(int))
+	case int8:
+		dist = (T)(src.(int8))
+	case int16:
+		dist = (T)(src.(int16))
+	case int32:
+		dist = (T)(src.(int32))
+	case int64:
+		dist = (T)(src.(int64))
+	case uint:
+		dist = (T)(src.(uint))
+	case uint8:
+		dist = (T)(src.(uint8))
+	case uint16:
+		dist = (T)(src.(uint16))
+	case uint32:
+		dist = (T)(src.(uint32))
+	case uint64:
+		dist = (T)(src.(uint64))
+	case float32:
+		dist = (T)(src.(float32))
+	case float64:
+		dist = (T)(src.(float64))
+	case string:
+		temp := src.(string)
+		switch any(dist).(type) {
+		case int64:
+			v, _ := strconv.ParseInt(temp, 10, 64)
+			dist = T(v)
+		case uint64:
+			v, _ := strconv.ParseUint(temp, 10, 64)
+			dist = T(v)
+		case float64:
+			v, _ := strconv.ParseFloat(temp, 64)
+			dist = T(v)
+		}
+	}
+	return
 }
