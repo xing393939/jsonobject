@@ -121,9 +121,11 @@ func TestLimitation(t *testing.T) {
 	nilJo := NewJsonObject(nil)
 	nilJo.Set("a", 1)
 	list1 := []interface{}{
-		math.MaxInt, math.MaxInt32, math.MaxInt64, math.MaxFloat32,
-		math.MaxFloat64, math.MaxUint32, uint64(18446744073709551615),
-		math.MaxInt8, math.MaxInt16, math.MaxUint8, math.MaxUint16,
+		math.MaxInt, math.MaxInt32, math.MaxInt64, math.MaxUint32,
+		math.MaxFloat32, math.MaxFloat64, uint64(math.MaxUint64),
+		int8(math.MaxInt8), int16(math.MaxInt16), int32(math.MaxInt32),
+		uint(math.MaxUint), uint8(math.MaxUint8), uint16(math.MaxUint16),
+		uint32(math.MaxUint32),
 	}
 	mapJo := NewJsonObject([]byte("{}"))
 	var list2 []string
@@ -137,7 +139,7 @@ func TestLimitation(t *testing.T) {
 		assertEqual(t, mapJo.GetString(fmt.Sprint("list2", i)), list2[i])
 	}
 	for i, num := range list1 {
-		if i == 3 || i == 4 || i == 6 {
+		if i > 3 {
 			continue
 		}
 		assertEqual(t, mapJo.GetInt(fmt.Sprint("list1", i)), num)
@@ -145,23 +147,39 @@ func TestLimitation(t *testing.T) {
 		assertEqual(t, mapJo.GetInt64(fmt.Sprint("list1", i)), int64(num.(int)))
 		assertEqual(t, mapJo.GetInt64(fmt.Sprint("list2", i)), int64(num.(int)))
 	}
-	assertEqual(t, mapJo.GetFloat64("list23"), math.MaxFloat32)
-	assertEqual(t, mapJo.GetFloat64("list24"), math.MaxFloat64)
+	assertEqual(t, mapJo.GetFloat64("list14"), math.MaxFloat32)
+	assertEqual(t, mapJo.GetFloat64("list15"), math.MaxFloat64)
+	assertEqual(t, mapJo.GetFloat64("list24"), math.MaxFloat32)
+	assertEqual(t, mapJo.GetFloat64("list25"), math.MaxFloat64)
 
 	// assert getNumber
 	assertEqual(t, int(getNumber[int64](list1[0])), list1[0])
 	assertEqual(t, int(getNumber[int64](list1[1])), list1[1])
 	assertEqual(t, int(getNumber[int64](list1[2])), list1[2])
-	assertEqual(t, getNumber[float64](list1[3]), list1[3])
+	assertEqual(t, getNumber[uint64](list1[3]), uint64(math.MaxUint32))
 	assertEqual(t, getNumber[float64](list1[4]), list1[4])
-	assertEqual(t, getNumber[uint64](list1[5]), uint64(4294967295))
+	assertEqual(t, getNumber[float64](list1[5]), list1[5])
 	assertEqual(t, getNumber[uint64](list1[6]), list1[6])
+	assertEqual(t, getNumber[int64](list1[7]), int64(math.MaxInt8))
+	assertEqual(t, getNumber[int64](list1[8]), int64(math.MaxInt16))
+	assertEqual(t, getNumber[int64](list1[9]), int64(math.MaxInt32))
+	assertEqual(t, getNumber[uint64](list1[10]), uint64(math.MaxUint))
+	assertEqual(t, getNumber[uint64](list1[11]), uint64(math.MaxUint8))
+	assertEqual(t, getNumber[uint64](list1[12]), uint64(math.MaxUint16))
+	assertEqual(t, getNumber[uint64](list1[13]), uint64(math.MaxUint32))
 
 	assertEqual(t, int(getNumber[int64](list2[0])), list1[0])
 	assertEqual(t, int(getNumber[int64](list2[1])), list1[1])
 	assertEqual(t, int(getNumber[int64](list2[2])), list1[2])
-	assertEqual(t, getNumber[float64](list2[3]), list1[3])
+	assertEqual(t, getNumber[uint64](list2[3]), uint64(math.MaxUint32))
 	assertEqual(t, getNumber[float64](list2[4]), list1[4])
-	assertEqual(t, getNumber[uint64](list2[5]), uint64(4294967295))
+	assertEqual(t, getNumber[float64](list2[5]), list1[5])
 	assertEqual(t, getNumber[uint64](list2[6]), list1[6])
+	assertEqual(t, getNumber[int64](list2[7]), int64(math.MaxInt8))
+	assertEqual(t, getNumber[int64](list2[8]), int64(math.MaxInt16))
+	assertEqual(t, getNumber[int64](list2[9]), int64(math.MaxInt32))
+	assertEqual(t, getNumber[uint64](list2[10]), uint64(math.MaxUint))
+	assertEqual(t, getNumber[uint64](list2[11]), uint64(math.MaxUint8))
+	assertEqual(t, getNumber[uint64](list2[12]), uint64(math.MaxUint16))
+	assertEqual(t, getNumber[uint64](list2[13]), uint64(math.MaxUint32))
 }
