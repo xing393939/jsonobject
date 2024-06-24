@@ -118,11 +118,14 @@ func TestMarshal(t *testing.T) {
 }
 
 func TestLimitation(t *testing.T) {
+	nilJo := NewJsonObject(nil)
+	nilJo.Set("a", 1)
 	list1 := []interface{}{
 		math.MaxInt, math.MaxInt32, math.MaxInt64, math.MaxFloat32,
 		math.MaxFloat64, math.MaxUint32, uint64(18446744073709551615),
+		math.MaxInt8, math.MaxInt16, math.MaxUint8, math.MaxUint16,
 	}
-	mapJo := NewJsonObject("{}")
+	mapJo := NewJsonObject([]byte("{}"))
 	var list2 []string
 	for i, num := range list1 {
 		list2 = append(list2, fmt.Sprint(num))
