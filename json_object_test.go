@@ -118,7 +118,11 @@ func TestMarshal(t *testing.T) {
 }
 
 func TestLimitation(t *testing.T) {
-	nilJo := NewJsonObject(nil)
+	var nilJo *JsonObject
+	nilJo.GetString()
+	nilJo = &JsonObject{nil}
+	nilJo.GetString()
+	nilJo = NewJsonObject(nil)
 	nilJo.Set("a", 1)
 	list1 := []interface{}{
 		math.MaxInt, math.MaxInt32, math.MaxInt64, math.MaxUint32,
