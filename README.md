@@ -4,7 +4,7 @@
 
 Easy JSON parser for Go. No custom structs, no code generation, no reflection.
 
-# Installing
+# Installation
 go get github.com/xing393939/jsonobject
 
 # Usage
