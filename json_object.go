@@ -141,6 +141,15 @@ func (jo *JsonObject) Marshal(params ...string) string {
 	return string(bytes)
 }
 
+func (jo *JsonObject) MarshalJSON() ([]byte, error) {
+	myObj := jo.getObject()
+	bytes, err := json.Marshal(myObj)
+	if err != nil {
+		return nil, err
+	}
+	return bytes, nil
+}
+
 func getNumber[T int64 | uint64 | float64](src any) (dist T) {
 	switch src.(type) {
 	case int:
