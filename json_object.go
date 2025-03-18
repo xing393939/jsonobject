@@ -83,6 +83,15 @@ func (jo *JsonObject) GetStringMap(params ...string) map[string]interface{} {
 	return myMap
 }
 
+func (jo *JsonObject) GetStringSlice(params ...string) []string {
+	myObj := jo.getObject(params...)
+	myMap, ok := myObj.([]string)
+	if !ok {
+		myMap = nil
+	}
+	return myMap
+}
+
 func (jo *JsonObject) GetInterfaceSlice(params ...string) []interface{} {
 	myObj := jo.getObject(params...)
 	mySli, _ := myObj.([]interface{})
