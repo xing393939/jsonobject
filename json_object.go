@@ -27,7 +27,7 @@ func NewJsonObject(obj interface{}) *JsonObject {
 }
 
 func (jo *JsonObject) Set(key string, value interface{}) bool {
-	myObj := jo.getObject()
+	myObj := jo.GetInterface()
 	if myMap, ok := myObj.(map[string]interface{}); ok {
 		myMap[key] = value
 		return true
@@ -36,7 +36,7 @@ func (jo *JsonObject) Set(key string, value interface{}) bool {
 }
 
 func (jo *JsonObject) GetString(params ...string) string {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	myStr := ""
 	switch myObj.(type) {
 	case string:
@@ -48,25 +48,25 @@ func (jo *JsonObject) GetString(params ...string) string {
 }
 
 func (jo *JsonObject) GetInt(params ...string) int {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	myNumber := getNumber[int64](myObj)
 	return int(myNumber)
 }
 
 func (jo *JsonObject) GetInt64(params ...string) int64 {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	myNumber := getNumber[int64](myObj)
 	return myNumber
 }
 
 func (jo *JsonObject) GetFloat64(params ...string) float64 {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	myNumber := getNumber[float64](myObj)
 	return myNumber
 }
 
 func (jo *JsonObject) GetBool(params ...string) bool {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	myBool, ok := myObj.(bool)
 	if !ok {
 		return false
@@ -75,7 +75,7 @@ func (jo *JsonObject) GetBool(params ...string) bool {
 }
 
 func (jo *JsonObject) GetStringMap(params ...string) map[string]interface{} {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	myMap, ok := myObj.(map[string]interface{})
 	if !ok {
 		myMap = make(map[string]interface{})
@@ -96,13 +96,13 @@ func (jo *JsonObject) GetStringSlice(params ...string) []string {
 }
 
 func (jo *JsonObject) GetInterfaceSlice(params ...string) []interface{} {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	mySli, _ := myObj.([]interface{})
 	return mySli
 }
 
 func (jo *JsonObject) GetJsonObjectSlice(params ...string) []*JsonObject {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	var newJoSlice []*JsonObject
 	if mySlice, ok := myObj.([]interface{}); ok {
 		for k := range mySlice {
@@ -119,14 +119,14 @@ func (jo *JsonObject) GetJsonObjectSlice(params ...string) []*JsonObject {
 }
 
 func (jo *JsonObject) GetJsonObject(params ...string) *JsonObject {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	newJo := &JsonObject{
 		&myObj,
 	}
 	return newJo
 }
 
-func (jo *JsonObject) getObject(params ...string) interface{} {
+func (jo *JsonObject) GetInterface(params ...string) interface{} {
 	if jo == nil || jo.p == nil {
 		return nil
 	}
@@ -141,11 +141,11 @@ func (jo *JsonObject) getObject(params ...string) interface{} {
 }
 
 func (jo *JsonObject) IsNil(params ...string) bool {
-	return jo.getObject(params...) == nil
+	return jo.GetInterface(params...) == nil
 }
 
 func (jo *JsonObject) Marshal(params ...string) string {
-	myObj := jo.getObject(params...)
+	myObj := jo.GetInterface(params...)
 	bytes, err := json.Marshal(myObj)
 	if err != nil {
 		return ""
@@ -154,7 +154,7 @@ func (jo *JsonObject) Marshal(params ...string) string {
 }
 
 func (jo *JsonObject) MarshalJSON() ([]byte, error) {
-	myObj := jo.getObject()
+	myObj := jo.GetInterface()
 	bytes, err := json.Marshal(myObj)
 	if err != nil {
 		return nil, err
