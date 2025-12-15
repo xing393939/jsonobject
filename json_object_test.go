@@ -61,6 +61,17 @@ func TestGetNonLeafNode(t *testing.T) {
 	}
 }
 
+func TestDelete(t *testing.T) {
+	jo := NewJsonObject(map[string]interface{}{
+		"float32": float32(1.32),
+		"int64":   int64(1),
+		"int":     1,
+		"string":  "1.32",
+	})
+	jo.Delete("int")
+	assertEqual(t, jo.GetInt("int"), 0)
+}
+
 func TestIsNil(t *testing.T) {
 	jo := NewJsonObject(map[string]interface{}{
 		"float32": float32(1.32),
