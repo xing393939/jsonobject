@@ -35,6 +35,15 @@ func (jo *JsonObject) Set(key string, value interface{}) bool {
 	return false
 }
 
+func (jo *JsonObject) Delete(key string) bool {
+	myObj := jo.GetInterface()
+	if myMap, ok := myObj.(map[string]interface{}); ok {
+		delete(myMap, key)
+		return true
+	}
+	return false
+}
+
 func (jo *JsonObject) GetString(params ...string) string {
 	myObj := jo.GetInterface(params...)
 	myStr := ""
